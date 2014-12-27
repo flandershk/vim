@@ -29,7 +29,7 @@ if has('gui_running')
     "set guifont=Monospace:h12:cANSI
     "set guifont=Inconsolata:h14:cANSI
     "set guifont=Microsoft_YaHei_Mono:b:h12
-    "set guifont=Lucida_Console:h12:cANSI
+    "set guifont=Lucida_Console:h12:b:cANSI
     "set guifont=Lucida_Sans_Typewriter:h12:cANSI
     set guifont=Consolas:h12:b:cANSI
     "set guifont=Consolas:h12:cANSI
@@ -140,11 +140,15 @@ func Debug()
 endfunc 
 
 " for svn.
-nnoremap <silent> <F9> :call Commit()<CR> <CR>
+nnoremap <silent> <F9> :call Commit()<CR>
 
 func Commit()
+    let log_msg = input("Input svn log message: ", "%")
+    if log_msg == ""
+        return
+    endif
     exec "!svn update %"
-    exec "!svn commit -m '%' %"
+    exec "!svn commit -m '".log_msg."' %"
 endfunc
 
 "===================================================
@@ -217,7 +221,7 @@ let Grep_Default_Options = '-iR'
 "let Grep_Default_Filelist = '*.c *.cpp *.h *.hpp'
 
 "--- OmniCppComplete ---
-set completeopt=longest,menu,preview
+set completeopt=longest,menu
 let OmniCpp_MayCompleteDot = 1 " autocomplete with .
 let OmniCpp_MayCompleteArrow = 1 " autocomplete with ->
 let OmniCpp_MayCompleteScope = 1 " autocomplete with ::
