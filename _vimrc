@@ -114,7 +114,7 @@ endif
 map <F5> :call CompileRun()<CR> 
 map <C-F5> :call Debug()<CR>
 
-func CompileRun() 
+func! CompileRun() 
     exec "w" 
     "C program
     if &filetype == 'c' 
@@ -127,7 +127,7 @@ func CompileRun()
 endfunc 
 
 " define Debug function.
-func Debug() 
+func! Debug() 
     exec "w" 
     "C program
     if &filetype == 'c' 
@@ -142,7 +142,7 @@ endfunc
 " for svn.
 nnoremap <silent> <F9> :call Commit()<CR>
 
-func Commit()
+func! Commit()
     let log_msg = input("Input svn log message: ", "%")
     if log_msg == ""
         return
