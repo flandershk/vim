@@ -143,12 +143,24 @@ endfunc
 nnoremap <silent> <F9> :call Commit()<CR>
 
 func! Commit()
-    let log_msg = input("Input svn log message: ", "%")
+    let file_name = expand("%")
+    let cmd = "svn update " . file_name
+    let cmd_output = system(cmd)
+    echo cmd_output
+
+    if match(toupper(cmd_output), "CONFILICT") != -1
+        return
+    endif
+
+    let log_msg = input("Input svn log message: ", "huangkun")
     if log_msg == ""
         return
     endif
-    exec "!svn update %"
-    exec "!svn commit -m '".log_msg."' %"
+    
+    echo "\n"
+    let cmd = "svn commit -m '" . log_msg . "'" . file_name
+    let cmd_output = system(cmd)
+    echo cmd_output
 endfunc
 
 "===================================================
