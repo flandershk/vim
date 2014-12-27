@@ -141,7 +141,6 @@ endfunc
 
 " for svn.
 nnoremap <silent> <F9> :call Commit()<CR>
-
 func! Commit()
     let file_name = expand("%")
     let cmd = "svn update " . file_name
@@ -160,9 +159,14 @@ func! Commit()
     endif
     
     echo "\n"
-    let cmd = "svn commit -m '" . log_msg . "'" . file_name
+    let cmd = "svn commit -m \"" . log_msg . "\" " . file_name
     let cmd_output = system(cmd)
     echo cmd_output
+endfunc
+
+nnoremap <silent> <F10> :call SvnDiff()<CR> <CR>
+func! SvnDiff()
+    exec "!svn diff %"
 endfunc
 
 "===================================================
