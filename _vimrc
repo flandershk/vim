@@ -148,7 +148,9 @@ func! Commit()
     let cmd_output = system(cmd)
     echo cmd_output
 
-    if match(toupper(cmd_output), "CONFILICT") != -1
+    if match(cmd_output, "\cconflict") != -1 
+        || match(cmd_output, "\cerror") != -1
+        || match(cmd_output, "\cexception") != -1
         return
     endif
 
