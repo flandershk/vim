@@ -174,7 +174,7 @@ func! SvnDiff()
     if match(cmd_output, "M ") == -1 
         let cmd_argument = " -r PREV "
     endif
-    exec "!svn diff " . cmd_argument . "%"
+    exec "!svn diff " . cmd_argument . "% | more"
 endfunc
 
 "===================================================
