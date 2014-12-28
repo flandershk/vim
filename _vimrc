@@ -166,7 +166,15 @@ endfunc
 
 nnoremap <silent> <F10> :call SvnDiff()<CR> <CR>
 func! SvnDiff()
-    exec "!svn diff %"
+    let file_name = expand("%")
+    let cmd = "svn status" . file_name
+    let cmd_output = system(cmd)
+
+    let cmd_argument = ""
+    if match(cmd_output, "M ") == -1 
+        let cmd_argument = " -r PREV "
+    endif
+    exec "!svn diff " . cmd_argument . "%"
 endfunc
 
 "===================================================
