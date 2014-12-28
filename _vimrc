@@ -56,8 +56,8 @@ endif
 
 if has("multi_byte") 
     " UTF-8 encoding
-    set encoding=utf-8
-    set termencoding=utf-8
+    set encoding=gbk
+    set termencoding=gbk
     set langmenu=zh_CN.UTF-8
     set fileencoding=gbk
     set fileencodings=gbk,utf-8,ucs-bom,chinese
@@ -144,6 +144,7 @@ nnoremap <silent> <F9> :call Commit()<CR>
 func! Commit()
     let file_name = expand("%")
     let cmd = "svn update " . file_name
+    echo cmd
     let cmd_output = system(cmd)
     echo cmd_output
 
@@ -160,6 +161,7 @@ func! Commit()
     
     echo "\n"
     let cmd = "svn commit -m \"" . log_msg . "\" " . file_name
+    echo cmd
     let cmd_output = system(cmd)
     echo cmd_output
 endfunc
