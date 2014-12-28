@@ -140,8 +140,8 @@ func! Debug()
 endfunc 
 
 " for svn.
-nnoremap <silent> <F9> :call Commit()<CR>
-func! Commit()
+nnoremap <silent> <F9> :call SvnCommit()<CR>
+func! SvnCommit()
     let file_name = expand("%")
     let cmd = "svn update " . file_name
     echo cmd
@@ -167,13 +167,22 @@ endfunc
 nnoremap <silent> <F10> :call SvnDiff()<CR> <CR>
 func! SvnDiff()
     let file_name = expand("%")
-    let cmd = "svn status" . file_name
+    let cmd = "svn status " . file_name
     let cmd_output = system(cmd)
     let cmd_argument = ""
     if match(cmd_output, "M ") == -1 
         let cmd_argument = " -r PREV "
     endif
     exec "!svn diff " . cmd_argument . "% | more"
+endfunc
+
+command! -nargs=* -complete=file Svnadd call SvnAdd()
+func! SvnAdd()
+    let file_name = expand("%")
+    let cmd = "svn add " . file_name
+    echo cmd
+    let cmd_output = system(cmd)
+    echo cmd_output
 endfunc
 
 "===================================================
