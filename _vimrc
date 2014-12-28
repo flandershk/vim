@@ -147,7 +147,6 @@ func! Commit()
     echo cmd
     let cmd_output = system(cmd)
     echo cmd_output
-
     if match(cmd_output, "\cconflict") != -1 
         || match(cmd_output, "\cerror") != -1
         || match(cmd_output, "\cexception") != -1
@@ -158,7 +157,6 @@ func! Commit()
     if log_msg == ""
         return
     endif
-    
     echo "\n"
     let cmd = "svn commit -m \"" . log_msg . "\" " . file_name
     echo cmd
@@ -171,7 +169,6 @@ func! SvnDiff()
     let file_name = expand("%")
     let cmd = "svn status" . file_name
     let cmd_output = system(cmd)
-
     let cmd_argument = ""
     if match(cmd_output, "M ") == -1 
         let cmd_argument = " -r PREV "
