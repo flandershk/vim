@@ -60,7 +60,7 @@ if has("multi_byte")
     set termencoding=gbk
     set langmenu=zh_CN.UTF-8
     set fileencoding=gbk
-    set fileencodings=gbk,utf-8,ucs-bom,chinese
+    set fileencodings=utf-8,gbk,ucs-bom,chinese
     "set formatoptions+=mM 
     if has("win32") 
         source $VIMRUNTIME/delmenu.vim 
@@ -86,6 +86,7 @@ set undodir=~/undofiles
 
 " If on Vim will wrap long lines at a character in 'breakat' rather
 " than at the last character that fits on the screen.
+set wrap
 set linebreak
 " support chinese.
 set fo+=mB
@@ -109,6 +110,7 @@ set directory=.,$TEMP
 "autocmd Filetype java,javascript,jsp inoremap <buffer>  .  .<C-X><C-O><C-P>
 if has("autocmd")
     autocmd Filetype java setlocal omnifunc=javacomplete#Complete
+    autocmd FilterWritePre * if &diff | setlocal wrap< | endif
 endif
 
 map <F5> :call CompileRun()<CR> 
@@ -142,47 +144,148 @@ endfunc
 " for svn.
 nnoremap <silent> <F9> :call SvnCommit()<CR>
 func! SvnCommit()
+    let svn_directory = 0
+    if isdirectory(expand("%"))
+        let svn_directory = 1
+    endif
+
     let file_name = expand("%")
-    let cmd = "svn update " . file_name
+    if svn_directory
+        let cmd = "svn update ."
+    else
+        let cmd = "svn update " . file_name
+    endif
     echo cmd
     let cmd_output = system(cmd)
     echo cmd_output
-    if match(cmd_output, "\cconflict") != -1 
-        || match(cmd_output, "\cerror") != -1
-        || match(cmd_output, "\cexception") != -1
+    if cmd_output == ""
+        echo "svn update return null!"
+        return
+    endif
+    if match(cmd_output, '\cconflict') != -1 ||
+                \ match(cmd_output, '\cinvalid option') != -1 ||
+                \ match(cmd_output, '\cerror') != -1 ||
+                \ match(cmd_output, '\cexception') != -1 ||
+                \ match(cmd_output, '\cskipped') != -1
+        return
+    elseif match(cmd_output, "155007") != -1
+        echo file_name . " is not a working copy!"
         return
     endif
 
-    let log_msg = input("Input svn log message: ", "huangkun")
+    if svn_directory
+        let cmd = "svn status ."
+        echo cmd
+        let cmd_output = system(cmd)
+        echo cmd_output
+        if match(cmd_output, "M ") == -1 &&
+                    \ match(cmd_output, "A ") == -1 &&
+                    \ match(cmd_output, "D ") == -1
+            echo "Directory " . file_name . " already in newest version!"
+            return
+        endif
+    else
+        let cmd = "svn status " . file_name
+        let cmd_output = system(cmd)
+        if match(cmd_output, "? ") != -1
+            || match(cmd_output, "A ") != -1
+            let cmd = "svn add " . file_name
+            echo cmd
+            let cmd_output = system(cmd)
+        endif
+        if cmd_output == ""
+            echo "File " . file_name . " already in newest version!"
+            return
+        else
+            echo cmd_output
+        endif
+    endif
+
+    let user_name = system("echo %USERNAME%")
+    let log_msg = input("Input svn log message: ", user_name, "menu")
     if log_msg == ""
         return
     endif
     echo "\n"
-    let cmd = "svn commit -m \"" . log_msg . "\" " . file_name
+    let cmd = "svn commit -m \"" . log_msg . "\" "
+    if svn_directory
+        let cmd = cmd . "."
+    else
+        let cmd = cmd . file_name
+    endif
     echo cmd
     let cmd_output = system(cmd)
     echo cmd_output
 endfunc
 
-nnoremap <silent> <F10> :call SvnDiff()<CR> <CR>
+nnoremap <silent> <F10> :call SvnDiff()<CR>
 func! SvnDiff()
     let file_name = expand("%")
-    let cmd = "svn status " . file_name
-    let cmd_output = system(cmd)
-    let cmd_argument = ""
-    if match(cmd_output, "M ") == -1 
-        let cmd_argument = " -r PREV "
+    let diff_file_name = escape(expand("#"), " ")
+    if file_name == ""
+        return
+    elseif match(file_name, " Revision") != -1
+        let diff_buffer = file_name
+        let file_name = diff_file_name
+    elseif match(diff_file_name, " Revision") != -1
+        let diff_buffer = diff_file_name
+    else
+        let diff_buffer = ""
     endif
-    exec "!svn diff " . cmd_argument . "% | more"
-endfunc
+    let winbufnum = bufwinnr(diff_buffer)
+    if winbufnum != -1 && diff_buffer != ""
+        exec "bd " . diff_buffer
+        call cursor(g:svn_save_line, g:svn_save_col)
+        return
+    else
+        let g:svn_save_line = line('.')
+        let g:svn_save_col = col('.')
+    endif
 
-command! -nargs=* -complete=file Svnadd call SvnAdd()
-func! SvnAdd()
-    let file_name = expand("%")
-    let cmd = "svn add " . file_name
-    echo cmd
+    let bufmodified = getbufvar(bufnr(file_name), "&mod")
+    if bufmodified
+        exec "w " . file_name
+    endif
+    let cmd = "svn status \"" . file_name . "\""
     let cmd_output = system(cmd)
-    echo cmd_output
+    if match(cmd_output, "M ") != -1 
+        let cmd_argument = "HEAD"
+    elseif match(cmd_output, "? ") != -1
+        echo "File " . file_name . " is nonversioned!"
+        return
+    elseif match(cmd_output, "W155007") != -1
+        echo file_name . " is not a working copy!"
+        return
+    else
+        let cmd_argument = "PREV"
+    endif
+
+    let cmd_output = system("svn cat -r " . cmd_argument . " \"" . file_name . "\"")
+    if match(cmd_output, "E195012") != -1
+        let cmd_argument = "HEAD"
+        let cmd_output = system("svn cat -r " . cmd_argument . " \"" . file_name . "\"")
+    endif
+    if diff_buffer == ""
+        let diff_buffer = escape(file_name . ": " . cmd_argument . " Revision", ' ')
+    endif
+    exec "view " . diff_buffer
+    setlocal noreadonly
+    silent! setlocal buftype=nofile
+    silent! setlocal bufhidden=hide
+    silent! setlocal modifiable
+    silent! setlocal noswapfile
+    silent! put! =cmd_output
+    let buf_ft = getbufvar(bufnr(file_name), '&filetype')
+    exec "setlocal filetype=" . buf_ft
+    let buf_ff = getbufvar(bufnr(file_name), '&fileformat')
+    exec "setlocal fileformat=" . buf_ff
+    normal! Gddgg
+    silent! setlocal nomodifiable
+    exec "b " . file_name
+    exec "vert diffsp " . diff_buffer
+    wincmd w
+    setlocal wrap
+    normal! gg
 endfunc
 
 "===================================================
@@ -235,7 +338,8 @@ let g:alternateExtensions_cxx = "h"
 
 "--- for netrw ---
 "list files, it's the key setting, if you haven't set, you will get blank buffer
-"let g:netrw_list_cmd = "ssh flanders@169.254.229.63 ls -Fa"
+let g:netrw_maxfilenamelen = 100
+let g:netrw_list_cmd = "dir"
 " if you haven't add putty directory in system path, you should specify scp/sftp command
 "let g:netrw_sftp_cmd = "C:\\Users\\wnq\\putty\\PSFTP.exe"
 "let g:netrw_scp_cmd = "C:\\Users\\wnq\\putty\\PSCP.exe"
