@@ -201,7 +201,7 @@ func! SvnCommit()
         endif
     endif
 
-    let user_name = system("echo %USERNAME%")
+    let user_name = substitute(system("echo %USERNAME%"), "\\n", "", "g")
     let log_msg = input("Input svn log message: ", user_name, "menu")
     if log_msg == ""
         return
@@ -279,6 +279,8 @@ func! SvnDiff()
     exec "setlocal filetype=" . buf_ft
     let buf_ff = getbufvar(bufnr(file_name), '&fileformat')
     exec "setlocal fileformat=" . buf_ff
+    let buf_fenc = getbufvar(bufnr(file_name), '&fileencoding')
+    exec "setlocal fileencoding=" . buf_fenc
     normal! Gddgg
     silent! setlocal nomodifiable
     exec "b " . file_name
