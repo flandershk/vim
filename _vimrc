@@ -150,11 +150,7 @@ func! SvnCommit()
     endif
 
     let file_name = expand("%")
-    if svn_directory
-        let cmd = "svn update ."
-    else
-        let cmd = "svn update " . file_name
-    endif
+    let cmd = "svn update " . file_name
     echo cmd
     let cmd_output = system(cmd)
     echo cmd_output
@@ -174,7 +170,7 @@ func! SvnCommit()
     endif
 
     if svn_directory
-        let cmd = "svn status ."
+        let cmd = "svn status " . file_name
         echo cmd
         let cmd_output = system(cmd)
         echo cmd_output
@@ -207,12 +203,7 @@ func! SvnCommit()
         return
     endif
     echo "\n"
-    let cmd = "svn commit -m \"" . log_msg . "\" "
-    if svn_directory
-        let cmd = cmd . "."
-    else
-        let cmd = cmd . file_name
-    endif
+    let cmd = "svn commit -m \"" . log_msg . "\" " . file_name
     echo cmd
     let cmd_output = system(cmd)
     echo cmd_output
