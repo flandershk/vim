@@ -279,8 +279,6 @@ func! SvnDiff()
     exec "setlocal filetype=" . buf_ft
     let buf_ff = getbufvar(bufnr(file_name), '&fileformat')
     exec "setlocal fileformat=" . buf_ff
-    let buf_fenc = getbufvar(bufnr(file_name), '&fileencoding')
-    exec "setlocal fileencoding=" . buf_fenc
     normal! Gddgg
     silent! setlocal nomodifiable
     exec "b " . file_name
