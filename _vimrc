@@ -247,6 +247,9 @@ func! SvnDiff()
     elseif match(cmd_output, "W155007") != -1
         echo file_name . " is not a working copy!"
         return
+    elseif match(cmd_output, "W155010") != -1
+        echo file_name . " is nonversioned!"
+        return
     else
         let cmd_argument = "PREV"
     endif
