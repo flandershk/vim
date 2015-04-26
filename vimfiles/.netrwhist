@@ -1,10 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =8
-let g:netrw_dirhist_1='F:/work/products/datamgnt'
-let g:netrw_dirhist_2='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接增量脚本'
-let g:netrw_dirhist_3='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接全量脚本'
-let g:netrw_dirhist_4='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接增量脚本'
-let g:netrw_dirhist_5='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接全量脚本'
-let g:netrw_dirhist_6='F:/work/openaudit'
-let g:netrw_dirhist_7='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接全量脚本'
-let g:netrw_dirhist_8='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接增量脚本'
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接增量脚本'
+let g:netrw_dirhist_2='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/MDB初始化脚本'
+let g:netrw_dirhist_3='F:/work/计费帐务云化/0开发区/01技术类文档/10割接文档/资料割接增量脚本'
+let g:netrw_dirhist_4='F:/work/计费账务云化项目/0开发区/01技术类文档/10割接文档/资料割接全量脚本'
