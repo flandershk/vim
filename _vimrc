@@ -183,8 +183,8 @@ func! SvnCommit()
     else
         let cmd = "svn status " . file_name
         let cmd_output = system(cmd)
-        if match(cmd_output, "? ") != -1
-            || match(cmd_output, "A ") != -1
+        if match(cmd_output, "? ") != -1 ||
+                    \ match(cmd_output, "A ") != -1
             let cmd = "svn add " . file_name
             echo cmd
             let cmd_output = system(cmd)
