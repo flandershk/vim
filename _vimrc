@@ -399,4 +399,3 @@ let g:ctrlp_custom_ignore = {
 
 "Open and close the NERD_tree.vim separately 
 "nmap <F11>  :TrinityToggleNERDTree<CR> 
-
