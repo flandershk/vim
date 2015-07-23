@@ -11,7 +11,7 @@ filetype plugin indent on
 set fileformats=unix,dos
 set nobackup
 set nowritebackup
-"set noswapfile
+set noswapfile
 "set columns=90
 set nocompatible
 set autochdir
