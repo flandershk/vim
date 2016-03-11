@@ -32,6 +32,7 @@ if has('gui_running')
     "set guifont=Lucida_Console:h12:b:cANSI
     "set guifont=Lucida_Sans_Typewriter:h12:cANSI
     set guifont=Consolas:h12:b:cANSI
+    "set guifont=Anonymous_Pro:h12:b:cANSI
     "set guifont=Consolas:h12:cANSI
     "set guifont=Bitstream_Vera_Sans_Mono:h12:cANSI
     "set guifont=Droid_Sans_Mono:h12:cANSI
